@@ -90,6 +90,7 @@ $response = Invoke-RestMethod `
 
 # 5. Output the newly created key
 $response
+```
 
 get the API key
 
