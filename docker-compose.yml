@@ -11,9 +11,9 @@ services:
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
     restart: always
     # build: . # uncomment to build from source
-    image: ghcr.io/linkwarden/linkwarden:latest # comment to build from source
+    image: ghcr.io/linkwarden/linkwarden:v2.10.0 # comment to build from source
     ports:
-      - 3000:3000
+      - 3001:3000
     volumes:
       - ./data:/data/data
     depends_on:
@@ -26,3 +26,5 @@ services:
       - .env
     volumes:
       - ./meili_data:/meili_data
+    #ports:
+      #- 7700:7700
