@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    env_file: .env
+    restart: always
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    labels:
+      net.unraid.docker.icon: "https://raw.githubusercontent.com/sgraaf/Unraid-Docker-Templates/main/postgresql16/icon.png"
+  linkwarden:
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+    restart: always
+    # build: . # uncomment to build from source
+    image: ghcr.io/linkwarden/linkwarden:v2.10.0 # comment to build from source
+    ports:
+      - 3001:3000
+    volumes:
+      - ./data:/data/data
+    depends_on:
+      - postgres
+      - meilisearch
+    labels:
+      net.unraid.docker.icon: "https://raw.githubusercontent.com/UNRA1DUser/unraid-docker-templates/main/templates/img/linkwarden.png"
+      net.unraid.docker.webui: http://[IP]:[PORT:53002]
+  meilisearch:
+    image: getmeili/meilisearch:v1.12.8
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./meili_data:/meili_data
+    #ports:
+      #- 7700:7700
+    labels:
+      net.unraid.docker.icon: "https://raw.githubusercontent.com/Collectathon/unraid-templates/main/icons/meilisearch.png"
+      net.unraid.docker.webui: http://[IP]:[PORT:7700]
