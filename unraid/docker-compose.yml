@@ -1,7 +1,9 @@
 name: linkwarden_stack
 
 services:
+  #postgres_service_name:
   postgres:
+    #container_name: postgres_container_name
     image: postgres:16-alpine
     env_file: .env
     # restart: always
@@ -10,32 +12,52 @@ services:
     labels:
       net.unraid.docker.icon: "https://raw.githubusercontent.com/sgraaf/Unraid-Docker-Templates/main/postgresql16/icon.png"
     healthcheck:
+      #test: ["CMD-SHELL", "pg_isready --username=postgres --dbname=postgres"]
+      #test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      #test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB:-testdatabase} -U $${POSTGRES_USER:-testuser}"]
+      #test: ["CMD-SHELL", "pg_isready -d ${POSTGRES_DB:-testdatabase} -U ${POSTGRES_USER:-testuser}"]
+      #test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
       test: ["CMD-SHELL", "pg_isready --username=${POSTGRES_USER:-postgres}"] # if using docker, username may be root, so default to postgres
+      #test: ["CMD-SHELL", "pg_isready"]
+      #test: ["CMD-SHELL", "false"]
       interval: 5s # run test for every interval of time specified
       timeout: 30s # fail check if test runs for longer than this period of time
       start_period: 5s # healthcheck failures after a container has been started do not count towards retries for this period of time
       #start_interval: 5s # Docker Engine v25 or later
       retries: 10
+  #linkwarden_service_name:
   linkwarden:
+    #container_name: linkwarden_container_name
     env_file: .env
     environment:
+      #- DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+      # POSTGRES_HOST should be the docker compose service name
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@${POSTGRES_HOST:-postgres}:5432/postgres
+      #- DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@${POSTGRES_HOST:-postgres_service_name}:5432/postgres
+      #- MEILI_HOST=${MEILI_HOST:-http://meilisearch:7700} # default to connecting through docker compose service name
     # restart: always
     # build: . # uncomment to build from source
     image: ghcr.io/linkwarden/linkwarden:v2.10.0 # comment to build from source
     ports:
+      # LINKWARDEN_PORT should be the host port
       - ${LINKWARDEN_PORT:-3000}:3000
     volumes:
       - ./data:/data/data
     depends_on:
+      #postgres_service_name:
       postgres:
         condition: service_healthy
+        #restart: true
+      #meilisearch_service_name:
       meilisearch:
+        # default behavior
         condition: service_started
     labels:
       net.unraid.docker.icon: "https://raw.githubusercontent.com/UNRA1DUser/unraid-docker-templates/main/templates/img/linkwarden.png"
       net.unraid.docker.webui: http://[IP]:[PORT:3001]
+  #meilisearch_service_name:
   meilisearch:
+    #container_name: meilisearch_container_name
     image: getmeili/meilisearch:v1.12.8
     # restart: always
     env_file:
