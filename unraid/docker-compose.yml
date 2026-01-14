@@ -24,7 +24,7 @@ services:
       timeout: 30s # fail check if test runs for longer than this period of time
       start_period: 5s # healthcheck failures after a container has been started do not count towards retries for this period of time
       #start_interval: 5s # Docker Engine v25 or later
-      retries: 10
+      retries: 20
   #linkwarden_service_name:
   linkwarden:
     #container_name: linkwarden_container_name
@@ -35,7 +35,7 @@ services:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@${POSTGRES_HOST:-postgres}:5432/postgres
       #- DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@${POSTGRES_HOST:-postgres_service_name}:5432/postgres
       #- MEILI_HOST=${MEILI_HOST:-http://meilisearch:7700} # default to connecting through docker compose service name
-    # restart: always
+    restart: unless-stopped
     # build: . # uncomment to build from source
     image: ghcr.io/linkwarden/linkwarden:v2.10.0 # comment to build from source
     ports:
