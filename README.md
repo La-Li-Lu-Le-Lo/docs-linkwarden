@@ -16,6 +16,29 @@ https://addons.mozilla.org/en-US/firefox/addon/linkwarden/
 
 ---
 
+`/data/data` in the linkwarden docker container uses up a ton of space
+especially when you use the archival feature of linkwarden
+the linkwarden docker container uses that folder to store archives in `/data/data/archives`
+so far, `/data/data/archives` is the only folder that linkwarden creates in `/data/data`
+it took up 133 MB, just from backing up links that are interesting to me
+it's filled with static content.
+No databases ; No need to stop the container to back it up
+
+so make sure NOT to back it up with unraid
+
+---
+
+this is what the example folder structure should look like:
+
+linkwarden appdata:
+`/mnt/user/appdata/linkwarden`
+docker-compose.yml  meili_data/  pgdata/
+
+linkwarden archive data:
+`/mnt/user/on-prem-archives/linkwardendata/archives/`
+
+---
+
 ```
     ports:
       - 3000:3000

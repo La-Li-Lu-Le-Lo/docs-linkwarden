@@ -42,7 +42,9 @@ services:
       # LINKWARDEN_PORT should be the host port
       - ${LINKWARDEN_PORT:-3000}:3000
     volumes:
-      - ./data:/data/data
+      - /mnt/user/on-prem-archives/linkwardendata/:/data/data # replace with your desired host path
+      # - /mnt/user/on-prem-archives/linkwardendata/archives:/data/data/archives # so far, this is the only subfolder that linkwarden creates
+      # - ./data:/data/data
     depends_on:
       #postgres_service_name:
       postgres:
